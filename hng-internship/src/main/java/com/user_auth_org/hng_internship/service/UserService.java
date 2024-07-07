@@ -136,12 +136,17 @@ public class UserService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String authenticatedUsername = authentication.getName();
 
-            // Retrieve user details by userId from the database
-            User userDetails = userRepository.findById(userId)
+            // Retrieve authenticated user details from the database
+            User authenticatedUser = userRepository.findByEmail(authenticatedUsername)
+                    .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
+
+            // Retrieve the details of the user by userId
+            User targetUser = userRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-            // Check if the authenticated user has permission to access this userId
-            if (!userDetails.getEmail().equals(authenticatedUsername)) {
+            // Check if the authenticated user is accessing their own data or data within the same organization
+            if (!targetUser.getEmail().equals(authenticatedUsername) &&
+                    !targetUser.getOrganizationId().equals(authenticatedUser.getOrganizationId())) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("status", "error");
                 errorResponse.put("message", "Unauthorized access");
@@ -150,11 +155,12 @@ public class UserService {
 
             // Construct the success response
             Map<String, Object> userData = new HashMap<>();
-            userData.put("userId", userDetails.getUserId());
-            userData.put("firstName", userDetails.getFirstname());
-            userData.put("lastName", userDetails.getLastname());
-            userData.put("email", userDetails.getEmail());
-            userData.put("phone", userDetails.getPhone());
+            userData.put("userId", targetUser.getUserId());
+            userData.put("firstName", targetUser.getFirstname());
+            userData.put("lastName", targetUser.getLastname());
+            userData.put("email", targetUser.getEmail());
+            userData.put("phone", targetUser.getPhone());
+            userData.put("organizationId", targetUser.getOrganizationId());
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");

@@ -60,22 +60,15 @@ public class User {
         return Objects.equals(userId, user.userId);
     }
 
-    // Add and remove organizations
     public void addOrganization(Organization organization) {
         organizations.add(organization);
         organization.getUsers().add(this);
     }
 
-    public void removeOrganization(Organization organization) {
-        organizations.remove(organization);
-        organization.getUsers().remove(this);
-    }
-
-    public Organization createOrganization() {
-        Organization organization = new Organization();
-        organization.setName(this.firstname + "'s Organization");
-        organization.addUser(this);
-        this.addOrganization(organization);
-        return organization;
+    public Integer getOrganizationId() {
+        return organizations.stream()
+                .map(Organization::getOrgId)
+                .findFirst()
+                .orElse(null);
     }
 }
