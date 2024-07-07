@@ -15,16 +15,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserDto userDto) {
-        return userService.registerUser(userDto);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        return userService.loginUser(loginDto);
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<?> getSingleUserData(@PathVariable int userId) {
         return userService.getSingleUserData(userId);
