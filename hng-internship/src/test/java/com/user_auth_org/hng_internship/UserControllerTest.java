@@ -1,5 +1,6 @@
 package com.user_auth_org.hng_internship;
 
+import com.user_auth_org.hng_internship.controller.AuthController;
 import com.user_auth_org.hng_internship.controller.UserController;
 import com.user_auth_org.hng_internship.dto.LoginDto;
 import com.user_auth_org.hng_internship.dto.UserDto;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.HashMap;
 import java.util.Map;
 
-@WebMvcTest(UserController.class)
+@WebMvcTest(AuthController.class)
 @Import(TestSecurityConfig.class)
 public class UserControllerTest {
 
@@ -68,7 +69,7 @@ public class UserControllerTest {
 
         String userJson = "{\"email\":\"john@example.com\",\"password\":\"password123\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"phone\":\"1234567890\"}";
 
-        mockMvc.perform(post("/api/users/register")
+        mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isCreated())
@@ -90,7 +91,7 @@ public class UserControllerTest {
         when(userService.registerUser(ArgumentMatchers.any(UserDto.class)))
                 .thenReturn((ResponseEntity) responseEntity);
 
-        mockMvc.perform(post("/api/users/register")
+        mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isUnprocessableEntity())
@@ -112,7 +113,7 @@ public class UserControllerTest {
         when(userService.registerUser(ArgumentMatchers.any(UserDto.class)))
                 .thenReturn((ResponseEntity) responseEntity);
 
-        mockMvc.perform(post("/api/users/register")
+        mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isBadRequest())
@@ -138,7 +139,7 @@ public class UserControllerTest {
 
         String loginJson = "{\"email\":\"john@example.com\",\"password\":\"password123\"}";
 
-        mockMvc.perform(post("/api/users/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(loginJson))
                 .andExpect(status().isOk())
@@ -161,7 +162,7 @@ public class UserControllerTest {
 
         String loginJson = "{\"email\":\"john@example.com\",\"password\":\"wrongpassword\"}";
 
-        mockMvc.perform(post("/api/users/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(loginJson))
                 .andExpect(status().isUnauthorized())
